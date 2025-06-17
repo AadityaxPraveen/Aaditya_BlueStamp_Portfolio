@@ -1,4 +1,4 @@
-RGB Sliders 
+# RGB Sliders 
 This Project is RGB Slider that shows three primary colors: Red, Blue Green. This can be activated with a slider under each color label. You can also mix these colors by sliding mutiple sliders at the same time creating purple and white. This project demonstrates how interactivity can be used to change RGB values. One of the biggest challenged in the project was making sure there were no short circuits due to the wires being so close to eachother making soldering it very hard. 
 
 You should comment out all portions of your portfolio that you have not completed yet, as well as any instructions:
