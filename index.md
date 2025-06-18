@@ -11,7 +11,7 @@ You should comment out all portions of your portfolio that you have not complete
 |:--:|:--:|:--:|:--:|
 | Aaditya P | California High School| Aerospace Engineering | Incoming Senior
 
-![Headstone Image](AadityaP.heic)
+![Headstone Image](AadityaP.heic.jpg)
   
 # Final Milestone
 
