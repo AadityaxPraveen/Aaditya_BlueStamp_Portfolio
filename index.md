@@ -79,7 +79,7 @@ Don't forget to place the link of where to buy each component inside the quotati
 | Pan- tilt Mechanism with Servos | What the item is used for | $42.70 | <a href="https://www.mouser.com/ProductDetail/Pimoroni/PIM183?qs=lc2O%252BfHJPVaXow9v4C2FMg%3D%3D&mgh=1&srsltid=AfmBOoogak1-TGBJgu9YiKBZ7QnChSs9LWGuSNQrc7gfcI5SXRs88YEiMP8&gQT=1/"> Link </a> |
 | Green Laser Pointer | Show where the planet is in a closed room | $25.99 | <a href="https://www.amazon.com/HITEKK-Pointer-Rechargeable-Tactical-Carrying/dp/B0DJS15VWP?gQT=1/"> Link </a> |
 | Power Distrubution Board | Used for Power  | $16.20 | <a href="https://www.keyestudio.com/products/keyestudio-4-channel-l298p-motor-drives-shield-v10-for-arduino-robot/"> Link </a> |
-| Potentiometer| to be used as Planet selector and a Switch as Mode Selector. | $4.26 | <a href="https://www.digikey.com/en/products/detail/bourns-inc/PDB241-GTR03-504A2/3780787?gQT=1/> Link </a> 
+| Potentiometer| to be used as Planet selector and a Switch as Mode Selector. | $4.26 | <a href="https://www.digikey.com/en/products/detail/bourns-inc/PDB241-GTR03-504A2/3780787?gQT=1/"> Link </a>| 
 
 
 # Other Resources/Examples
