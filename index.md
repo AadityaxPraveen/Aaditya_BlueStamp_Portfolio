@@ -5,7 +5,7 @@ My project is a Real Time Planet Tracker and this tracks planets with a laser po
 |:--:|:--:|:--:|:--:|
 | Aaditya P | California High School| Aerospace Engineering | Incoming Senior
 
-![Headstone Image](<img src = "AadityaP.heic.jpg" width = "450" height = "400")
+<img src = "AadityaP.heic.jpg" width = "450" height = "400")
   
 <!--# Final Milestone
 
