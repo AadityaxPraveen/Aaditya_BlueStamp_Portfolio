@@ -7,7 +7,7 @@ My project is a Real Time Planet Tracker and this tracks planets with a laser po
 
 ![Headstone Image](AadityaP.heic.jpg)
   
-```# Final Milestone
+<!--# Final Milestone
 
 **Don't forget to replace the text below with the embedding for your milestone video. Go to Youtube, click Share -> Embed, and copy and paste the code to replace what's below.**
 
@@ -44,7 +44,7 @@ For your first milestone, describe what your project is and how you plan to buil
 - Technical progress you've made so far
 - Challenges you're facing and solving in your future milestones
 - What your plan is to complete your project
-```
+-->
 
 
 # Schematics 
@@ -79,12 +79,12 @@ void loop() {
 | Potentiometer| to be used as Planet selector and a Switch as Mode Selector. | $4.26 | <a href="https://www.digikey.com/en/products/detail/bourns-inc/PDB241-GTR03-504A2/3780787?gQT=1/"> Link </a>| 
 
 
-```# Other Resources/Examples
+<!--# Other Resources/Examples
 One of the best parts about Github is that you can view how other people set up their own work. Here are some past BSE portfolios that are awesome examples. You can view how they set up their portfolio, and you can view their index.md files to understand how they implemented different portfolio components.
 - [Example 1](https://trashytuber.github.io/YimingJiaBlueStamp/)
 - [Example 2](https://sviatil0.github.io/Sviatoslav_BSE/)
 - [Example 3](https://arneshkumar.github.io/arneshbluestamp/) **
-```
+-->
 # RGB Sliders 
 
 **Don't forget to replace the text below with the embedding for your milestone video. Go to Youtube, click Share -> Embed, and copy and paste the code to replace what's below.**
