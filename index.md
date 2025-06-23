@@ -44,7 +44,7 @@ For your first milestone, describe what your project is and how you plan to buil
 - Technical progress you've made so far
 - Challenges you're facing and solving in your future milestones
 - What your plan is to complete your project
--->
+
 
 
 # Schematics 
@@ -64,7 +64,7 @@ void loop() {
   // put your main code here, to run repeatedly:
 
 }
-```
+-->
 
 # Bill of Materials
 
@@ -87,7 +87,6 @@ One of the best parts about Github is that you can view how other people set up 
 -->
 # RGB Sliders 
 
-**Don't forget to replace the text below with the embedding for your milestone video. Go to Youtube, click Share -> Embed, and copy and paste the code to replace what's below.**
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/I4OzfxXsNjA?si=r3gweBtMdo1lx9lo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
