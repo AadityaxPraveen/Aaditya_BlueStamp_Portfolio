@@ -1,5 +1,5 @@
 # Real Time Planet Tracker
-My project is a Real Time Planet Tracker and this tracks planets with a laser pointer that is powered by a Servo motor. The biggest challenges I had with this project is making the servo motor due to the screwing and getting all of the arduino connections.
+My project is a Real Time Planet Tracker and this tracks planets with a laser pointer that is powered by a servo motor. The biggest challenges I had with this project is making the servo motor due to the screwing and getting all of the arduino connections.
 
 | **Engineer** | **School** | **Area of Interest** | **Grade** |
 |:--:|:--:|:--:|:--:|
@@ -90,6 +90,6 @@ One of the best parts about Github is that you can view how other people set up 
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/I4OzfxXsNjA?si=r3gweBtMdo1lx9lo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-My starter Project is RGB Sliders and this shows 3 main colors ( Red, Blue, Green) through sliders. To use this you must have it connected with USB-A, once connected you can slide up the sliders and this will activate the colors with the respective slider you push. You can also mix colors by pushing mutliple sliders and have a white light with all 3 sliders pushed. Some challenged I faced was avoiding short circuits because the wires were so close to eachother making soldering pretty difficult. 
+My starter Project is RGB Sliders and this shows 3 main colors ( Red, Blue, Green) through sliders. To use this you must have it connected with USB-A, once connected you can slide up the sliders and this will activate the colors with the respective slider you push. The sliders are potentiometers so the more you slide up the more power is outputted.  You can also mix colors by pushing mutliple sliders and have a white light with all 3 sliders pushed. Some challenged I faced was avoiding short circuits because the wires were so close to each other making soldering pretty difficult. 
 
 <img src = "IMG_7674.HEIC.jpg" width = "450" height = "600">
