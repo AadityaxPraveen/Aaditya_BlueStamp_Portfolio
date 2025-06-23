@@ -92,4 +92,4 @@ One of the best parts about Github is that you can view how other people set up 
 
 My starter Project is RGB Sliders and this shows 3 main colors ( Red, Blue, Green) through sliders. To use this you must have it connected with USB-A, once connected you can slide up the sliders and this will activate the colors with the respective slider you push. You can also mix colors by pushing mutliple sliders and have a white light with all 3 sliders pushed. Some challenged I faced was avoiding short circuits because the wires were so close to eachother making soldering pretty difficult. 
 
-![Headstone Image](IMG_7674.HEIC.jpg)
+<img src = "IMG_7674.HEIC.jpg" width = "450" height = "600">
