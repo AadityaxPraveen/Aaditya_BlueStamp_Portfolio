@@ -38,13 +38,6 @@ For your second milestone, explain what you've worked on since your previous mil
 <iframe width="560" height="315" src="https://www.youtube.com/embed/h4RonOS_DbQ?si=PFpO-KHJd071FopQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 My first milestone in my project is making sure all of the connections in the breadboard and arduino works. This includes connecting the servo motors, gps module, and IMU. To make this work I ran a simple code to test it out. Some challenges I faced with this first milestone is making sure all of the connections were correct, builing the new/better servo motor, and making sure the simple code was working. For my future milestones I am planning on making a better code so it can track the planets also make the better servo motor and attach the laser to that. 
-<!--
-For your first milestone, describe what your project is and how you plan to build it. You can include:
-- An explanation about the different components of your project and how they will all integrate together
-- Technical progress you've made so far
-- Challenges you're facing and solving in your future milestones
-- What your plan is to complete your project 
--->
 
 <!--
 # Schematics 
