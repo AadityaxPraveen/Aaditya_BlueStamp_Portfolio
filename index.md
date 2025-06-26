@@ -41,7 +41,7 @@ My first milestone in my project is making sure all of the connections in the br
 
 
 # Schematics 
-<img src = "IMG_7674.HEIC.jpg" width = "450" height = "600">
+<img src = "1a30a69f-ffd0-46b4-83b8-59b102e71529 (1).JPG" width = "450" height = "600">
 
 
 <!--
