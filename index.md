@@ -48,7 +48,7 @@ Some challenges I faced with this first milestone include making sure all of the
 # Schematics 
 <img src = "1a30a69f-ffd0-46b4-83b8-59b102e71529 (1).JPG" width = "900" height = "600">
 
-<a href="https://paulplusx.wordpress.com/2016/03/03/rtpts_hw/">Visit Example Website</a>
+<a href="https://paulplusx.wordpress.com/2016/03/03/rtpts_hw/">shubhampaul tinkercad</a>
 
 
 <!--
