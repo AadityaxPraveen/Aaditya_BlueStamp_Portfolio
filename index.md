@@ -37,18 +37,18 @@ For your second milestone, explain what you've worked on since your previous mil
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/h4RonOS_DbQ?si=PFpO-KHJd071FopQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-Summary
+# Summary
 
 My first milestone in my project is making sure all of the connections in the breadboard and Arduino work. This includes connecting the servo motors, GPS module, and IMU. To make this work, I ran a simple code to test everything out. For my future milestones, I am planning on making a better code so it can track the planets, and also improve the servo motor and attach the laser to it.
 
-Challenges
+# Challenges
 
 Some challenges I faced with this first milestone include making sure all of the connections were correct, building the new/better servo motor, and ensuring the simple test code was working properly.
 
 # Schematics 
-<img src = "1a30a69f-ffd0-46b4-83b8-59b102e71529 (1).JPG" width = "700" height = "600">
+<img src = "1a30a69f-ffd0-46b4-83b8-59b102e71529 (1).JPG" width = "900" height = "600">
 
-<a href="(https://paulplusx.wordpress.com/2016/03/03/rtpts_hw/)">Visit Example Website</a>
+<a href="https://paulplusx.wordpress.com/2016/03/03/rtpts_hw/">Visit Example Website</a>
 
 
 <!--
