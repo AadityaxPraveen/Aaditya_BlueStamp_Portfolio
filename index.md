@@ -11,7 +11,7 @@ My project is a Real Time Planet Tracker and this tracks planets with a laser po
 
 **Don't forget to replace the text below with the embedding for your milestone video. Go to Youtube, click Share -> Embed, and copy and paste the code to replace what's below.**
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/F7M7imOVGug" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/K05nV2iawsE?si=kE9Uvx09qNqWfP08" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 For your final milestone, explain the outcome of your project. Key details to include are:
 - What you've accomplished since your previous milestone
@@ -19,20 +19,22 @@ For your final milestone, explain the outcome of your project. Key details to in
 - A summary of key topics you learned about
 - What you hope to learn in the future after everything you've learned at BSE
 
-
+-->
 
 # Second Milestone
 
-**Don't forget to replace the text below with the embedding for your milestone video. Go to Youtube, click Share -> Embed, and copy and paste the code to replace what's below.**
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/y3VAmNlER5Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-For your second milestone, explain what you've worked on since your previous milestone. You can highlight:
-- Technical details of what you've accomplished and how they contribute to the final goal
-- What has been surprising about the project so far
-- Previous challenges you faced that you overcame
-- What needs to be completed before your final milestone 
--->
+<iframe width="560" height="315" src="https://www.youtube.com/embed/K05nV2iawsE?si=kE9Uvx09qNqWfP08" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+# Summary 
+
+My second milestone in my project is making sure the calculations for the Azimuth and Altitude were working well. So to test that they work I use the planet Mars and told the code to print out the azimuth, altitude, right ascention, and declination. This is to basically find the coordinates of where the planet is at and it works well.
+
+# Challenges 
+
+The main challenge I faced with this part was the servo over rotating and chocking itself which messes up the connections with the breadboard and ardino. To fix this I just shorted the rotation to only 360 degrees and this worked because my servo motor stopped chocking itself.
+
 # First Milestone
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/h4RonOS_DbQ?si=PFpO-KHJd071FopQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
@@ -51,23 +53,111 @@ Some challenges I faced with this first milestone include making sure all of the
 <a href="https://paulplusx.wordpress.com/2016/03/03/rtpts_hw/">shubhampaul tinkercad</a>
 
 
-<!--
-# Code
-Here's where you'll put your code. The syntax below places it into a block of code. Follow the guide [here]([url](https://www.markdownguide.org/extended-syntax/)) to learn how to customize it to your project needs. 
 
-```c++
+# Code
+#include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
+#include <TinyGPSPlus.h>
+
+// Servo driver setup
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+
+// Servo channels
+const uint8_t panChannel  = 0;
+const uint8_t tiltChannel = 1;
+
+// Safe microsecond limits for standard servos
+const uint16_t panMinUs = 1300;
+const uint16_t panMaxUs = 1700;
+const uint16_t tiltMinUs = 1200;
+const uint16_t tiltMaxUs = 1800;
+
+// GPS setup (pins 15/16 on Arduino Mega)
+TinyGPSPlus gps;
+
+// Planet data (Earth excluded)
+const char* planetNames[] = {
+  "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"
+};
+
+const double azimuths[] = {
+  167.4, 271.6, 124.6, 252.4, 293.3, 275.9, 294.2, 13.1
+};
+
+const double altitudes[] = {
+  68.5, 29.6, 47.1, 58.8, -29.6, 26.1, -29.0, -75.6
+};
+
+const int planetCount = sizeof(planetNames) / sizeof(planetNames[0]);
+int planetIndex = 0;
+
+// Button pin
+const int buttonPin = 44;
+bool buttonPressed = false;
+
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
-  Serial.println("Hello World!");
+  Serial3.begin(9600);
+  Wire.begin();
+  pwm.begin();
+  pwm.setPWMFreq(50);
+
+  pinMode(buttonPin, INPUT); // No internal pull-up/pull-down, use your 5V/GND logic
+
+  Serial.println("🚀 Planet Tracker Initialized");
+  printPlanetInfo(planetIndex);
+  moveServos(azimuths[planetIndex], altitudes[planetIndex]);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  while (Serial3.available()) {
+    gps.encode(Serial3.read());
+  }
 
+  // Button press detection
+  if (digitalRead(buttonPin) == HIGH && !buttonPressed) {
+    planetIndex = (planetIndex + 1) % planetCount;
+    printPlanetInfo(planetIndex);
+    moveServos(azimuths[planetIndex], altitudes[planetIndex]);
+    buttonPressed = true;
+    delay(250); // debounce
+  }
+
+  if (digitalRead(buttonPin) == LOW) {
+    buttonPressed = false;
+  }
 }
 
--->
+// Move the servos based on azimuth and altitude
+void moveServos(double az, double alt) {
+  uint16_t panPWM = mapAngleToPWM(az, 0, 360, panMinUs, panMaxUs);
+  uint16_t tiltPWM = mapAngleToPWM(constrain(alt, 0, 90), 0, 90, tiltMinUs, tiltMaxUs);
+
+  panPWM = constrain(panPWM, panMinUs, panMaxUs);
+  tiltPWM = constrain(tiltPWM, tiltMinUs, tiltMaxUs);
+
+  pwm.writeMicroseconds(panChannel, panPWM);
+  pwm.writeMicroseconds(tiltChannel, tiltPWM);
+}
+
+// Convert an angle to PWM signal
+uint16_t mapAngleToPWM(double angle, double minAngle, double maxAngle, uint16_t minPWM, uint16_t maxPWM) {
+  return minPWM + (angle - minAngle) * (maxPWM - minPWM) / (maxAngle - minAngle);
+}
+
+// Print the selected planet info
+void printPlanetInfo(int index) {
+  Serial.print("🔭 Now Tracking: ");
+  Serial.println(planetNames[index]);
+  Serial.print("Azimuth: ");
+  Serial.print(azimuths[index]);
+  Serial.println("°");
+  Serial.print("Altitude: ");
+  Serial.print(altitudes[index]);
+  Serial.println("°\n");
+}
+
+
 # Bill of Materials
 
 | **Part** | **Note** | **Price** | **Link** |
