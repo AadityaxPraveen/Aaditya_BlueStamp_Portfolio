@@ -1,6 +1,5 @@
 # Real Time Planet Tracker
-My project is a Real Time Planet Tracker and this tracks planets with a laser pointer that is powered by a servo motor. The biggest challenges I had with this project is making the servo motor due to the screwing and getting all of the arduino connections.
-
+My project is a real time planet tracker. What this project does is it tracks the planets coordinates using azimuth and altitude and points to where the planet is in the sky with a servo with a laser attached. 
 | **Engineer** | **School** | **Area of Interest** | **Grade** |
 |:--:|:--:|:--:|:--:|
 | Aaditya P | California High School| Aerospace Engineering | Incoming Senior
