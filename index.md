@@ -103,7 +103,7 @@ void setup() {
 
   pinMode(buttonPin, INPUT); // No internal pull-up/pull-down, use your 5V/GND logic
 
-  Serial.println("🚀 Planet Tracker Initialized");
+  Serial.println(" Planet Tracker Initialized");
   printPlanetInfo(planetIndex);
   moveServos(azimuths[planetIndex], altitudes[planetIndex]);
 }
@@ -146,7 +146,7 @@ uint16_t mapAngleToPWM(double angle, double minAngle, double maxAngle, uint16_t 
 
 // Print the selected planet info
 void printPlanetInfo(int index) {
-  Serial.print("🔭 Now Tracking: ");
+  Serial.print("Now Tracking: ");
   Serial.println(planetNames[index]);
   Serial.print("Azimuth: ");
   Serial.print(azimuths[index]);
