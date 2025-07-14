@@ -1,5 +1,5 @@
 # Real Time Planet Tracker
-My project is a real time planet tracker. What this project does is it tracks the planets coordinates using azimuth and altitude and points to where the planet is in the sky with a servo with a laser attached. 
+My project is a real time planet tracker. What this project does is it tracks the planets coordinates using azimuth and altitude and points to where the planet is in the sky with a servo with a laser attached. This can go through all planets execpt earth and you can control what planet is calculates with a button. The main challenges I faced was dealing with the Servo tangling due to over rotations, Dealing with the Azimuth and Altitude Math, and dealing with a not working IMU which I decided to scrap. 
 | **Engineer** | **School** | **Area of Interest** | **Grade** |
 |:--:|:--:|:--:|:--:|
 | Aaditya P | California High School| Aerospace Engineering | Incoming Senior
@@ -28,11 +28,11 @@ For your final milestone, explain the outcome of your project. Key details to in
 
 # Summary 
 
-My second milestone in my project is making sure the calculations for the Azimuth and Altitude were working well. So to test that they work I use the planet Mars and told the code to print out the azimuth, altitude, right ascention, and declination. This is to basically find the coordinates of where the planet is at and it works well.
+My second milestone in my project is making sure the calculations for the Azimuth and Altitude were working well. So to test that they work I use the planet Mars and told the code to print out the azimuth, altitude, right ascention, and declination. This is to basically find the coordinates of where the planet is at and it works well. For my future milestones I plan on adding all the other planets in the solar system and cycle them using a button switcher.  
 
 # Challenges 
 
-The main challenge I faced with this part was the servo over rotating and chocking itself which messes up the connections with the breadboard and ardino. To fix this I just shorted the rotation to only 360 degrees and this worked because my servo motor stopped chocking itself.
+The main challenge I faced with this part was the servo over rotating and chocking itself which messes up the connections with the breadboard and ardino. To fix this I just shorted the rotation to only 360 degrees and this worked because my servo motor stopped chocking itself. Another problem I had was figuring out what I was going to do with the IMU since it was not working at all . What I decided to do is to scrap the IMU and just angle the Servos North for the most accurate results. 
 
 # First Milestone
 
@@ -40,11 +40,11 @@ The main challenge I faced with this part was the servo over rotating and chocki
 
 # Summary
 
-My first milestone in my project is making sure all of the connections in the breadboard and Arduino work. This includes connecting the servo motors, GPS module, and IMU. To make this work, I ran a simple code to test everything out. For my future milestones, I am planning on making a better code so it can track the planets, and also improve the servo motor and attach the laser to it.
+My first milestone in my project is making sure all of the connections in the breadboard and Arduino work. This includes connecting the servo motors, GPS module, and IMU. To make this work, I ran a simple code to test everything out. For my future milestones, I am planning on making a better code so it can track the planets, and also improve the servo motor and attach the laser to it. 
 
 # Challenges
 
-Some challenges I faced with this first milestone include making sure all of the connections were correct, building the new/better servo motor, and ensuring the simple test code was working properly.
+Some challenges I faced with this first milestone include making sure all of the connections were correct and what I did to help me through this problem was cross refernecing outside sources to make sure it was correct. Another Problem I had was building the servo motor since it was very difficult due to the small screws and it would break very easily. What I did to overcome this problem was just going through the steps very slowly so I ensure there is no mistakes. 
 
 # Schematics 
 <img src = "1a30a69f-ffd0-46b4-83b8-59b102e71529 (1).JPG" width = "900" height = "600">
@@ -163,11 +163,10 @@ void printPlanetInfo(int index) {
 |:--:|:--:|:--:|:--:|
 | Arduino Mega 2560 REV3| It is used as the brains of the project | $48.99 | <a href="https://www.microcenter.com/product/621387/arduino-mega-2560-rev3-256kb-(8kb-after-bootloader)-flash-memory/"> Link </a> |
 | Neo-6 GPS transmission |This item is used to detect where each planet is| $27.25 | <a href="https://www.u-blox.com/en/product/neo-6-series/"> Link </a> |
-| MPU9250| This is used for stability of the alignment | $17.99 | <a href="https://www.amazon.com/HiLetgo-Gyroscope-Acceleration-Accelerator-Magnetometer/dp/B01I1J0Z7Y/"> Link </a> |
 | Pan- tilt Mechanism with Servos | What the item is used for | $42.70 | <a href="https://www.mouser.com/ProductDetail/Pimoroni/PIM183?qs=lc2O%252BfHJPVaXow9v4C2FMg%3D%3D&mgh=1&srsltid=AfmBOoogak1-TGBJgu9YiKBZ7QnChSs9LWGuSNQrc7gfcI5SXRs88YEiMP8&gQT=1/"> Link </a> |
 | Green Laser Pointer | Show where the planet is in a closed room | $25.99 | <a href="https://www.amazon.com/HITEKK-Pointer-Rechargeable-Tactical-Carrying/dp/B0DJS15VWP?gQT=1/"> Link </a> |
 | Power Distrubution Board | Used for Power  | $16.20 | <a href="https://www.keyestudio.com/products/keyestudio-4-channel-l298p-motor-drives-shield-v10-for-arduino-robot/"> Link </a> |
-| Potentiometer| to be used as Planet selector and a Switch as Mode Selector. | $4.26 | <a href="https://www.digikey.com/en/products/detail/bourns-inc/PDB241-GTR03-504A2/3780787?gQT=1/"> Link </a>| 
+
 
 
 <!--# Other Resources/Examples
