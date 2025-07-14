@@ -1,0 +1,148 @@
+```python
+#include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
+#include <TinyGPSPlus.h>
+#include <SoftwareSerial.h>
+
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+TinyGPSPlus gps;
+
+#define SERVO_MIN 150  // Pulse length for 0 degrees
+#define SERVO_MAX 600  // Pulse length for 180 degrees
+
+const int panChannel = 0;
+const int tiltChannel = 1;
+const int buttonPin = 44;
+
+HardwareSerial &gpsSerial = Serial2; // TX2=16, RX2=17
+
+// GPS coordinates
+float latitude = 0.0;
+float longitude = 0.0;
+int year, month, day, hour, minute, second;
+
+// Constants
+const double J2000 = 2451545.0;
+const double DEG_TO_RAD = 3.141592653589793 / 180.0;
+const double RAD_TO_DEG = 180.0 / 3.141592653589793;
+
+void setup() {
+  Serial.begin(9600);
+  gpsSerial.begin(9600);
+  pwm.begin();
+  pwm.setPWMFreq(60);
+  pinMode(buttonPin, INPUT_PULLUP);
+  Serial.println("Planet Tracker Initialized");
+}
+
+void loop() {
+  while (gpsSerial.available()) {
+    gps.encode(gpsSerial.read());
+  }
+
+  if (gps.location.isValid() && gps.date.isValid() && gps.time.isValid()) {
+    latitude = gps.location.lat();
+    longitude = gps.location.lng();
+    year = gps.date.year();
+    month = gps.date.month();
+    day = gps.date.day();
+    hour = gps.time.hour();
+    minute = gps.time.minute();
+    second = gps.time.second();
+
+    // Mars example orbital elements (for testing)
+    double n = 0.523998;  // deg/day
+    double L = 82.9625;   // deg
+    double P = -73.50317; // deg
+    double e = 0.093346;
+    double a = 1.524;     // AU
+    double i = 1.84969;   // deg
+    double o = 49.55954;  // deg
+
+    // Step 1: Days since J2000
+    long jd = julianDay(year, month, day, hour, minute, second);
+    double d = jd - J2000;
+
+    // Step 2: Mean Anomaly
+    double M = fmod(n * d + (L - P), 360.0);
+    double M_rad = M * DEG_TO_RAD;
+
+    // Step 3: True Anomaly
+    double v = M + (180 / 3.141592653589793) * (2 * e * sin(M_rad));
+    double v_rad = v * DEG_TO_RAD;
+
+    // Step 4: Radius Vector
+    double r = a * (1 - e * e) / (1 + e * cos(v_rad));
+
+    // Step 5: Heliocentric Coordinates
+    double xh = r * (cos(o * DEG_TO_RAD) * cos((v + P - o) * DEG_TO_RAD) - sin(o * DEG_TO_RAD) * sin((v + P - o) * DEG_TO_RAD) * cos(i * DEG_TO_RAD));
+    double yh = r * (sin(o * DEG_TO_RAD) * cos((v + P - o) * DEG_TO_RAD) + cos(o * DEG_TO_RAD) * sin((v + P - o) * DEG_TO_RAD) * cos(i * DEG_TO_RAD));
+    double zh = r * (sin((v + P - o) * DEG_TO_RAD) * sin(i * DEG_TO_RAD));
+
+    // Earth coordinates (simplified)
+    double xe = -0.935762;
+    double ye = 0.325870;
+    double ze = 0;
+
+    // Step 6: Geocentric
+    double xg = xh - xe;
+    double yg = yh - ye;
+    double zg = zh - ze;
+
+    // Step 7: Equatorial Coordinates
+    double ec = 23.4393 * DEG_TO_RAD;  // Obliquity
+    double xeq = xg;
+    double yeq = yg * cos(ec) - zg * sin(ec);
+    double zeq = yg * sin(ec) + zg * cos(ec);
+
+    // Step 8: RA & Dec
+    double RA = atan2(yeq, xeq) * RAD_TO_DEG;
+    if (RA < 0) RA += 360;
+    double RA_hours = RA / 15.0;
+
+    double Dec = atan2(zeq, sqrt(xeq * xeq + yeq * yeq)) * RAD_TO_DEG;
+
+    // Step 9: Local Sidereal Time
+    double LST = fmod(100.46 + 0.985647 * d + longitude + 15.0 * (hour + minute / 60.0), 360.0);
+    double HA = fmod(LST - RA + 360.0, 360.0);
+    double HA_rad = HA * DEG_TO_RAD;
+    double Dec_rad = Dec * DEG_TO_RAD;
+    double Lat_rad = latitude * DEG_TO_RAD;
+
+    // Step 10: Altitude
+    double sinAlt = sin(Dec_rad) * sin(Lat_rad) + cos(Dec_rad) * cos(Lat_rad) * cos(HA_rad);
+    double alt = asin(sinAlt) * RAD_TO_DEG;
+
+    // Step 11: Azimuth
+    double cosAz = (sin(Dec_rad) - sinAlt * sin(Lat_rad)) / (cos(asin(sinAlt)) * cos(Lat_rad));
+    double az = acos(cosAz) * RAD_TO_DEG;
+    if (sin(HA_rad) > 0) az = 360.0 - az;
+
+    // Print Results
+    Serial.print("Azimuth: "); Serial.print(az);
+    Serial.print(" | Altitude: "); Serial.print(alt);
+    Serial.print(" | RA: "); Serial.print(RA_hours);
+    Serial.print("h | Dec: "); Serial.println(Dec);
+
+    // Map to servo
+    int panPWM = map(az, 0, 360, SERVO_MIN, SERVO_MAX);
+    int tiltPWM = map(alt, 0, 90, SERVO_MIN, SERVO_MAX);
+    pwm.setPWM(panChannel, 0, panPWM);
+    pwm.setPWM(tiltChannel, 0, tiltPWM);
+
+    delay(5000);
+  }
+}
+
+long julianDay(int y, int m, int d, int hr, int min, int sec) {
+  if (m <= 2) {
+    y -= 1;
+    m += 12;
+  }
+  long A = y / 100;
+  long B = 2 - A + A / 4;
+  long JD = (long)(365.25 * (y + 4716)) + (long)(30.6001 * (m + 1)) + d + B - 1524.5;
+  double dayFraction = (hr + min / 60.0 + sec / 3600.0) / 24.0;
+  return JD + dayFraction;
+}
+```
