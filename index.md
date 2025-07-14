@@ -54,6 +54,8 @@ Some challenges I faced with this first milestone include making sure all of the
 
 
 # Code
+
+```python
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <TinyGPSPlus.h>
@@ -155,7 +157,7 @@ void printPlanetInfo(int index) {
   Serial.print(altitudes[index]);
   Serial.println("°\n");
 }
-
+``` 
 
 # Bill of Materials
 
