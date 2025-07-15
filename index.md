@@ -52,7 +52,7 @@ Some challenges I faced with this first milestone include making sure all of the
 
 <a href="https://paulplusx.wordpress.com/2016/03/03/rtpts_hw/">shubhampaul tinkercad</a>
 
-
+<img src = "IMG_7745.jpg" width = "900" height = "600">
 
 # Code
 
