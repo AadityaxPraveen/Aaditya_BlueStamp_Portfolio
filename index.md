@@ -57,107 +57,209 @@ Some challenges I faced with this first milestone include making sure all of the
 # Code
 
 ```python
+#include <TinyGPSPlus.h>
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
-#include <TinyGPSPlus.h>
+#include <math.h>
 
-// Servo driver setup
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+/* ─── Hardware constants ───────────────────────────────────────────── */
+Adafruit_PWMServoDriver pwm;           // PCA9685 @ 0x40
+TinyGPSPlus            gps;           // GPS module on Serial2
 
-// Servo channels
-const uint8_t panChannel  = 0;
-const uint8_t tiltChannel = 1;
+const uint8_t  PAN_CH   = 0;
+const uint8_t  TILT_CH  = 1;
+const uint16_t PAN_MIN  = 1300, PAN_MAX  = 1700;   // µs
+const uint16_t TILT_MIN = 1200, TILT_MAX = 1800;   // µs
+const uint8_t  BTN_PIN  = 44;                      // active-LOW button
 
-// Safe microsecond limits for standard servos
-const uint16_t panMinUs = 1300;
-const uint16_t panMaxUs = 1700;
-const uint16_t tiltMinUs = 1200;
-const uint16_t tiltMaxUs = 1800;
-
-// GPS setup (pins 15/16 on Arduino Mega)
-TinyGPSPlus gps;
-
-// Planet data (Earth excluded)
-const char* planetNames[] = {
-  "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"
+/* ─── J2000 orbital elements (VSOP87) ───────────────────────────────── */
+struct Elem { double a,e,I,L,P,O,n; };             // a AU, angles deg, n deg/day
+static const Elem PLANET[9] = {
+/*idx  a         e         I°        L°         P°         Ω°        n°/d */
+  {0.38709893,0.20563069, 7.00487, 252.25084,  77.45645,  48.33167, 4.09233445}, // 0 Mercury
+  {0.72333199,0.00677323, 3.39471, 181.97973, 131.60247,  76.67069, 1.60213603}, // 1 Venus
+  {1.00000011,0.01671022,-0.00015, 100.46435, 102.94719, -11.26064, 0.98560899}, // 2 Earth
+  {1.52366231,0.09341233, 1.85061, 355.45332, 336.04084,  49.57854, 0.52403979}, // 3 Mars
+  {5.20336301,0.04839266, 1.30530,  34.40438,  14.75385, 100.55615, 0.08308677}, // 4 Jupiter
+  {9.53707032,0.05415060, 2.48446,  49.94432,  92.43194, 113.71504, 0.03344414}, // 5 Saturn
+  {19.19126393,0.04716771, 0.76986, 313.23218, 170.96424,  74.22988, 0.01172834},// 6 Uranus
+  {30.06896348,0.00858587, 1.76917, 304.88003,  44.97135, 131.72169, 0.00602076},// 7 Neptune
+  {39.48168677,0.24880766,17.14175, 238.92881, 224.06676, 110.30347, 0.00395800} // 8 Pluto
 };
 
-const double azimuths[] = {
-  167.4, 271.6, 124.6, 252.4, 293.3, 275.9, 294.2, 13.1
+/* display order (skip Earth) */
+const uint8_t TRACK_IDX[8]  = {0,1,3,4,5,6,7,8};
+const char*   TRACK_NAME[8] = {
+  "Mercury","Venus","Mars","Jupiter",
+  "Saturn","Uranus","Neptune","Pluto"
 };
 
-const double altitudes[] = {
-  68.5, 29.6, 47.1, 58.8, -29.6, 26.1, -29.0, -75.6
-};
+/* ─── Math helpers ─────────────────────────────────────────── */
+#define D2R (M_PI/180.0)
+#define R2D (180.0/M_PI)
+static inline double d2r(double d){ return d*D2R; }
+static inline double r2d(double r){ return r*R2D; }
+static inline double wrap360(double d){ d=fmod(d,360.0); return d<0?d+360.0:d; }
 
-const int planetCount = sizeof(planetNames) / sizeof(planetNames[0]);
-int planetIndex = 0;
+/* Julian Day & GMST */
+static double julianDayUTC(int y,int m,int D,double hr){
+  if(m<=2){ y--; m+=12; }
+  int A=y/100, B=2-A+A/4;
+  long J=(long)(365.25*(y+4716)) + (long)(30.6001*(m+1)) + D + B - 1524;
+  return J + hr/24.0;
+}
+static double gmstDeg(double jd){
+  double T=(jd-2451545.0)/36525.0;
+  double g=280.46061837 + 360.98564736629*(jd-2451545.0)
+          + 0.000387933*T*T - T*T*T/38710000.0;
+  return wrap360(g);
+}
 
-// Button pin
-const int buttonPin = 44;
-bool buttonPressed = false;
+/* Kepler chain */
+static double meanAnom(const Elem&e,double d){ return wrap360(e.n*d + (e.L - e.P)); }
+static double trueAnom(double Mdeg,double e){
+  double M=d2r(Mdeg);
+  double v=M + (2*e - pow(e,3)/4)*sin(M)
+              + 1.25*e*e*sin(2*M)
+              + (13.0/12.0)*pow(e,3)*sin(3*M);
+  return wrap360(r2d(v));
+}
+static double radiusAU(const Elem&e,double vdeg){
+  return e.a*(1-e.e*e.e)/(1+e.e*cos(d2r(vdeg)));
+}
+static void heliocXYZ(const Elem&e,double vdeg,double r,
+                      double &x,double &y,double &z){
+  double O=d2r(e.O), I=d2r(e.I), w=d2r(e.P-e.O), v=d2r(vdeg);
+  double cosO=cos(O), sinO=sin(O), cosI=cos(I), sinI=sin(I);
+  double cosVW=cos(v+w), sinVW=sin(v+w);
+  x = r*(cosO*cosVW - sinO*sinVW*cosI);
+  y = r*(sinO*cosVW + cosO*sinVW*cosI);
+  z = r*(sinVW*sinI);
+}
+static void eclToEqu(double x,double y,double z,double &X,double &Y,double &Z){
+  const double eps=d2r(23.43928);
+  X=x; Y=y*cos(eps)-z*sin(eps); Z=y*sin(eps)+z*cos(eps);
+}
+static void raDec(double X,double Y,double Z,double &ra,double &dec){
+  ra  = wrap360(r2d(atan2(Y,X)));
+  dec = r2d(atan2(Z, sqrt(X*X + Y*Y)));
+}
+static void raDecToAzAlt(double ra,double dec,double jd,double lat,double lon,
+                         double &az,double &alt){
+  double lst = wrap360(gmstDeg(jd) - lon);   // west-negative longitude
+  double ha  = wrap360(lst - ra);
+  double haR=d2r(ha), decR=d2r(dec), latR=d2r(lat);
+  alt = r2d(asin( sin(decR)*sin(latR) + cos(decR)*cos(latR)*cos(haR) ));
+  double sinAz = sin(haR);
+  double cosAz = cos(haR)*sin(latR) - tan(decR)*cos(latR);
+  az  = r2d(atan2(sinAz, cosAz)); if(az<0) az+=360.0;
+}
+static void computePlanet(uint8_t elemIdx,double jd,double lat,double lon,
+                          double &ra,double &dec,double &az,double &alt){
+  const Elem &p = PLANET[elemIdx];    // target planet
+  const Elem &e = PLANET[2];          // Earth
+  double d = jd - 2451545.0;
 
-void setup() {
+  /* planet heliocentric */
+  double Mp=meanAnom(p,d), vp=trueAnom(Mp,p.e), rp=radiusAU(p,vp);
+  double xp,yp,zp; heliocXYZ(p,vp,rp,xp,yp,zp);
+
+  /* Earth heliocentric */
+  double Me=meanAnom(e,d), ve=trueAnom(Me,e.e), re=radiusAU(e,ve);
+  double xe,ye,ze; heliocXYZ(e,ve,re,xe,ye,ze);
+
+  /* geocentric vector → equatorial → horizon */
+  double X=xp-xe, Y=yp-ye, Z=zp-ze, Xq,Yq,Zq; eclToEqu(X,Y,Z,Xq,Yq,Zq);
+  raDec(Xq,Yq,Zq,ra,dec);
+  raDecToAzAlt(ra,dec,jd,lat,lon,az,alt);
+}
+
+/* Servo helpers */
+static uint16_t pwmMap(double v,double in0,double in1,
+                       uint16_t out0,uint16_t out1){
+  return (uint16_t)(out0 + (v-in0)*(out1-out0)/(in1-in0));
+}
+static void moveServos(double az,double alt){
+  alt = constrain(alt, 0.0, 90.0);
+  uint16_t panPWM  = pwmMap(az , 0, 360, PAN_MIN , PAN_MAX );
+  uint16_t tiltPWM = pwmMap(alt, 0,  90, TILT_MIN, TILT_MAX );
+  panPWM  = constrain(panPWM , PAN_MIN , PAN_MAX );
+  tiltPWM = constrain(tiltPWM, TILT_MIN, TILT_MAX );
+  pwm.writeMicroseconds(PAN_CH , panPWM );
+  pwm.writeMicroseconds(TILT_CH, tiltPWM);
+}
+
+/* ─── Globals ─────────────────────────────────────────────── */
+int  curIdx      = 0;      // index in TRACK_… arrays
+bool btnLatched  = false;
+int  lastPrinted = -1;
+
+/* ─── Arduino setup / loop ───────────────────────────────── */
+void setup(){
   Serial.begin(9600);
-  Serial3.begin(9600);
-  Wire.begin();
-  pwm.begin();
-  pwm.setPWMFreq(50);
-
-  pinMode(buttonPin, INPUT); // No internal pull-up/pull-down, use your 5V/GND logic
-
-  Serial.println(" Planet Tracker Initialized");
-  printPlanetInfo(planetIndex);
-  moveServos(azimuths[planetIndex], altitudes[planetIndex]);
+  Serial2.begin(9600);          // GPS on HW Serial2
+  Wire.begin(); pwm.begin(); pwm.setPWMFreq(50);
+  pinMode(BTN_PIN, INPUT_PULLUP);
+  Serial.println(F("PlanetTracker – real-time"));
 }
 
-void loop() {
-  while (Serial3.available()) {
-    gps.encode(Serial3.read());
+void loop()
+{
+  /* feed GPS parser */
+  while (Serial2.available())
+    gps.encode(Serial2.read());
+
+  /* UTC date & time */
+  int y, m, d, h, mn, s;  double hr;
+  if (gps.date.isValid() && gps.time.isValid()){
+    y = gps.date.year();  m = gps.date.month(); d = gps.date.day();
+    h = gps.time.hour();  mn = gps.time.minute(); s = gps.time.second();
+                             // compile-time fallback
+                             } else {                              // force exact UTC for table comparison
+    y  = 2025;   // YYYY
+    m  = 7;      // MM
+    d  = 16;     // DD
+    h  = 21;     // HH  (UTC)
+    mn = 3;      // MM
+    s  = 0;      // SS
+}
+
   }
+  hr = h + mn/60.0 + s/3600.0;
+  double jd = julianDayUTC(y, m, d, hr);
 
-  // Button press detection
-  if (digitalRead(buttonPin) == HIGH && !buttonPressed) {
-    planetIndex = (planetIndex + 1) % planetCount;
-    printPlanetInfo(planetIndex);
-    moveServos(azimuths[planetIndex], altitudes[planetIndex]);
-    buttonPressed = true;
-    delay(250); // debounce
+  /* observer site */
+  double lat = gps.location.isValid() ? gps.location.lat() : 37.3142;
+  double lon = gps.location.isValid() ? gps.location.lng() : -121.9686; // west-neg
+
+  /* button debounce / cycle planets */
+  if (!digitalRead(BTN_PIN) && !btnLatched){
+    curIdx = (curIdx + 1) % 8;
+    btnLatched = true;
+    delay(250);
   }
+  if (digitalRead(BTN_PIN))
+    btnLatched = false;
 
-  if (digitalRead(buttonPin) == LOW) {
-    buttonPressed = false;
+  /* compute pointing & drive servos */
+  uint8_t elemIdx = TRACK_IDX[curIdx];
+  double ra, dec, az, alt;
+  computePlanet(elemIdx, jd, lat, lon, ra, dec, az, alt);
+  moveServos(az, alt);
+
+  /* print once per planet change */
+  if (curIdx != lastPrinted){
+    lastPrinted = curIdx;
+    Serial.println(F("--------------------------------"));
+    Serial.print  (F("Planet: ")); Serial.println(TRACK_NAME[curIdx]);
+    Serial.print  (F("RA   (deg): ")); Serial.println(ra , 4);
+    Serial.print  (F("Dec  (deg): ")); Serial.println(dec, 4);
+    Serial.print  (F("Az   (deg): ")); Serial.println(az , 4);
+    Serial.print  (F("Alt  (deg): ")); Serial.println(alt, 4);
+    Serial.println();
   }
 }
 
-// Move the servos based on azimuth and altitude
-void moveServos(double az, double alt) {
-  uint16_t panPWM = mapAngleToPWM(az, 0, 360, panMinUs, panMaxUs);
-  uint16_t tiltPWM = mapAngleToPWM(constrain(alt, 0, 90), 0, 90, tiltMinUs, tiltMaxUs);
-
-  panPWM = constrain(panPWM, panMinUs, panMaxUs);
-  tiltPWM = constrain(tiltPWM, tiltMinUs, tiltMaxUs);
-
-  pwm.writeMicroseconds(panChannel, panPWM);
-  pwm.writeMicroseconds(tiltChannel, tiltPWM);
-}
-
-// Convert an angle to PWM signal
-uint16_t mapAngleToPWM(double angle, double minAngle, double maxAngle, uint16_t minPWM, uint16_t maxPWM) {
-  return minPWM + (angle - minAngle) * (maxPWM - minPWM) / (maxAngle - minAngle);
-}
-
-// Print the selected planet info
-void printPlanetInfo(int index) {
-  Serial.print("Now Tracking: ");
-  Serial.println(planetNames[index]);
-  Serial.print("Azimuth: ");
-  Serial.print(azimuths[index]);
-  Serial.println("°");
-  Serial.print("Altitude: ");
-  Serial.print(altitudes[index]);
-  Serial.println("°\n");
-}
 ``` 
 
 # Bill of Materials
