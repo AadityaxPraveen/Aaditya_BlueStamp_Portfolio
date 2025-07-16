@@ -33,7 +33,7 @@ My second milestone in my project is making sure the calculations for the Azimut
 
 # Challenges 
 
-The main challenge I faced with this part was the servo over rotating and chocking itself which messes up the connections with the breadboard and ardino. To fix this I just shorted the rotation to only 360 degrees and this worked because my servo motor stopped chocking itself. Another problem I had was figuring out what I was going to do with the IMU since it was not working at all . What I decided to do is to scrap the IMU and just angle the Servos North for the most accurate results. 
+The main challenge I faced with this part was the servo over rotating and chocking itself which messes up the connections with the breadboard and ardino. To fix this I just shorted the rotation to only 360 degrees and this worked because my servo motor stopped chocking itself. Another problem I had was figuring out what I was going to do with the IMU since it was not working at all. What I decided to do is to scrap the IMU and just angle the Servos North for the most accurate results. Another big problem I had was just learning the math because it was super complicated with 8 steps and steps 1-8 were all just plugging it in but step 9 was the most complex because I needed to know pretty complex. What took the most time was realizing that I couldnt just use hardcoded values for this and I realized it way to late and this took a huge tank of my time. 
 
 # First Milestone
 
