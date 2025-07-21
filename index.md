@@ -7,19 +7,17 @@ My project is a real time planet tracker. What this project does is it tracks th
 
 <img src = "AadityaP.heic.jpg" width = "450" height = "600">
   
-<!--# Final Milestone
+# Final Milestone
 
-**Don't forget to replace the text below with the embedding for your milestone video. Go to Youtube, click Share -> Embed, and copy and paste the code to replace what's below.**
+# Summary
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/K05nV2iawsE?si=kE9Uvx09qNqWfP08" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+My final milestone in my project is just finishing the project and making sure everything works. For my final project I have a working real time planet tracker which uses azimuth and altitude calculations to see where each planet is real time in our solar system. For my project I have it calculating  the following planets in order: Mercury, Venus, Mars, Saturn, Jupiter, Uranus, Neptune, Pluto. To visually see where each planet is I am using a servo with a laser attached to it to point at the planets so you can see the direction where they are. 
 
-For your final milestone, explain the outcome of your project. Key details to include are:
-- What you've accomplished since your previous milestone
-- What your biggest challenges and triumphs were at BSE
-- A summary of key topics you learned about
-- What you hope to learn in the future after everything you've learned at BSE
 
--->
+# Challenges
+
+
+For this project there were tons of challenges but the main ones were involved with the code. One of the biggest problems was the GPS working with the Math. The gps would need a start time for it to work so if anything would print before that it would print the wrong values. To fix this I added delay so the math would only start going when the GPS would work so the GPS would produce the correct values and this worked. Another big problem I had was with Sin functions in C++. The problem was C++ doesnt give right outputs for sin functions in degrees. TO fix this I put my math in Radians and then covered them to degrees when it was time to print. 
 
 # Second Milestone
 
@@ -69,8 +67,8 @@ TinyGPSPlus            gps;   // GPS on Serial2
 const uint8_t  PAN_CH   = 0,
                TILT_CH  = 1,
                BTN_PIN  = 44;                  // active-LOW button
-const uint16_t PAN_MIN  = 1300, PAN_MAX  = 1700,  // µs
-               TILT_MIN = 1200, TILT_MAX = 1800;  // µs
+const uint16_t PAN_MIN  = 1440, PAN_MAX  = 1675,  // µs THIS MEANS 1440 is equal to 0 deg and 1672 is equal to 359 deg
+               TILT_MIN = 400, TILT_MAX = 2500;  // µs 
 
 // ── J2000 heliocentric elements (VSOP87 two-body) ────────────
 struct Elem { double a,e,I,L,P,O,n; };
@@ -153,8 +151,11 @@ static void raDec(double X,double Y,double Z,double &ra,double &dec){
 
 // ── Horizon (all in RADIANS, output rad) ───────────────────── there is no ouput...? want end values in degrees anyways
 
-static void horizonRad(double jd, double lon, double lat, double ut, double ra, double decDeg, double altDeg, double azDeg) {
+static void horizonRad(double jd, double lon, double lat, double ut, double ra, double decDeg, double &altDeg, double &azDeg) {
   
+  // adding delay for sensors to start up and get values
+  //delay(1000);
+
   double lst = 100.46 + (0.985647 * (jd - 2451545.0)) + lon + (15 * ut); // LST: local sidereal time
   
   // if negative, add 360 to make positive/between 0 and 360
@@ -192,7 +193,85 @@ static void horizonRad(double jd, double lon, double lat, double ut, double ra, 
     azDeg = 360 - aDeg;
   }
 
+  //Serial.print("ut: ");
+  //Serial.println(ut);
+
+  //for (int i = 0; i < 1000; i++) {
+    //Serial.println(i);
+    
+    //Serial.print("Altitude: ");
+    //Serial.println(altDeg);
+
+    //Serial.print("Azimuth: ");
+    //Serial.println(azDeg);
+  //}
 }
+
+/*
+
+static void horizonRad(double jd, double lon, double lat, double ut, double ra, double decDeg, double &altDeg, double &azDeg) {
+  // have a for loop that runs for awhile to get the right values, then update. initialize all variables outside loop
+
+  double lst, ha, decRad, latRad, haRad, altRad, a, aDeg;
+
+  for (int i = 0; i < 1000; i++) {
+
+    lst = 100.46 + (0.985647 * (jd - 2451545.0)) + lon + (15 * ut); // LST: local sidereal time
+    
+    // if negative, add 360 to make positive/between 0 and 360
+    if (lst < 0) {
+      lst = lst + 360;
+    }
+
+    ha = lst - ra; // both of these are degrees for this calculation
+
+    // same for hour angle
+    if (ha < 0) {
+      ha = ha + 360;
+    }
+
+    decRad = decDeg * D2R;
+    latRad = lat * D2R;
+    haRad = ha * D2R;
+
+    altRad = (sin(decRad) * sin(latRad)) + (cos(decRad) * cos(latRad) * cos(haRad)); // altitude in radians
+    altRad = asin(altRad);
+
+    altDeg = altRad * R2D;
+
+    // a is used in the calculation of the azimuth - here it is in radians
+    a = (sin(decRad) - (sin(altRad) * sin(latRad))) / (cos(altRad) * cos(latRad));
+    a = acos(a);
+
+    aDeg = a * R2D; // convert it into degrees
+
+    if (sin(haRad) < 0){
+      azDeg = aDeg;
+    }
+
+    else{
+      azDeg = 360 - aDeg;
+    }
+
+  }
+
+  //Serial.print("LST: ");
+  //Serial.println(lst);
+
+  //Serial.print("Altitude: ");
+  //Serial.println(altDeg);
+
+  //Serial.print("Altitude: ");
+  //Serial.println(altDeg);
+
+  //Serial.print("Altitude: ");
+  //Serial.println(altDeg);
+
+  //Serial.print("Azimuth: ");
+  //Serial.println(azDeg);
+}
+
+*/
 
 // ── Compute RA/Dec (deg) ─────────────────────────────────────
 static void computeRaDec(uint8_t idx,double jd,double &raDeg,double &decDeg)
@@ -218,8 +297,8 @@ static uint16_t mapPWM(double v,double in0,double in1,
 }
 static void moveServos(double azDeg,double altDeg){
   altDeg = constrain(altDeg,0.0,90.0);
-  uint16_t pan = mapPWM(azDeg , 0,360, PAN_MIN, PAN_MAX),
-           til = mapPWM(altDeg, 0, 90, TILT_MIN, TILT_MAX);
+  uint16_t pan = mapPWM(azDeg, 0,360, PAN_MIN, PAN_MAX),//azDeg
+           til = mapPWM(-altDeg, -90, 90, TILT_MIN, TILT_MAX);//-altDeg bc its reversed
   pwm.writeMicroseconds(PAN_CH , constrain(pan, PAN_MIN, PAN_MAX));
   pwm.writeMicroseconds(TILT_CH, constrain(til, TILT_MIN, TILT_MAX));
 }
@@ -228,9 +307,13 @@ static void moveServos(double azDeg,double altDeg){
 int  curIdx     = 0, lastPrinted = -1;
 bool btnLatched = false;
 
+//int validCount = 0; // counts number of discards we have done
+//const int MIN_VALID_READINGS = 50; // Number of reads to discard
+
 void setup() {
   Serial.begin(9600);
   Serial2.begin(9600);
+  //delay(1000);
   Wire.begin(); pwm.begin(); pwm.setPWMFreq(50);
   pinMode(BTN_PIN, INPUT_PULLUP);
 }
@@ -239,8 +322,42 @@ void loop() {
   // feed GPS parser
   while (Serial2.available()) gps.encode(Serial2.read());
 
+  if (!gps.date.isValid() || !gps.time.isValid()) {
+    //Serial.println("Waiting for valid GPS time...");
+    return;
+  }
+
+
+  //if (validCount < MIN_VALID_READINGS) {
+    //validCount++;
+    //Serial.print("Discarding GPS reading #"); Serial.println(validCount);
+    //return;
+  //}
+
+
   // get UTC date/time
   int y,m,d,h,mn,s; double hr;
+  /*
+  for (int i = 0; i < 1000; i++) {
+    if (gps.date.isValid() && gps.time.isValid()) {
+      y  = gps.date.year();
+      m  = gps.date.month();
+      d  = gps.date.day();
+      h  = gps.time.hour();
+      mn = gps.time.minute();
+      s  = gps.time.second();
+    } else {
+      // fallback to compile-time
+      char Mstr[4]; sscanf(__DATE__,"%3s %d %d", Mstr, &d, &y);
+      const char* mo="JanFebMarAprMayJunJulAugSepOctNovDec";
+      m = (strstr(mo,Mstr)-mo)/3 + 1;
+      sscanf(__TIME__,"%d:%d:%d", &h, &mn, &s);
+    }
+    hr = h + mn/60.0 + s/3600.0;
+  }
+  */
+
+  
   if (gps.date.isValid() && gps.time.isValid()) {
     y  = gps.date.year();
     m  = gps.date.month();
@@ -256,6 +373,7 @@ void loop() {
     sscanf(__TIME__,"%d:%d:%d", &h, &mn, &s);
   }
   hr = h + mn/60.0 + s/3600.0;
+  
   double jd = julianDayUTC(y,m,d, hr);
   double ut = hr; // terry: I think hr is the same as ut - defining for simplicity
 
@@ -275,10 +393,13 @@ void loop() {
   computeRaDec(IDX[curIdx], jd, raDeg, decDeg);
 
   double altDeg, azDeg; // these are not defined previously, will be assigned value once inside the function
+  //for (int i = 0; i < 1000; i++) {
   horizonRad(jd, lonDeg, latDeg, ut, raDeg, decDeg, altDeg, azDeg);
+  //horizonRad(jd, lonDeg, latDeg, ut, 136.6929, 13.0508, altDeg, azDeg);
+  //}
 
-  // drive servos
-  //moveServos(azDeg, altDeg);
+   //drive servos
+  moveServos(azDeg, altDeg);
 
   // print once per planet change
   if (curIdx != lastPrinted) {
