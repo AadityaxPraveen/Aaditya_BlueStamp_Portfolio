@@ -422,19 +422,19 @@ void loop() {
 | **Part** | **Note** | **Price** | **Link** |
 |:--:|:--:|:--:|:--:|
 | Arduino Mega 2560 REV3| It is used as the brains of the project | $48.99 | <a href="https://www.microcenter.com/product/621387/arduino-mega-2560-rev3-256kb-(8kb-after-bootloader)-flash-memory/"> Link </a> |
-| Neo-6 GPS transmission |This item is used to detect where each planet is| $27.25 | <a href="https://www.u-blox.com/en/product/neo-6-series/"> Link </a> |
-| Pan- tilt Mechanism with Servos | What the item is used for | $42.70 | <a href="https://www.mouser.com/ProductDetail/Pimoroni/PIM183?qs=lc2O%252BfHJPVaXow9v4C2FMg%3D%3D&mgh=1&srsltid=AfmBOoogak1-TGBJgu9YiKBZ7QnChSs9LWGuSNQrc7gfcI5SXRs88YEiMP8&gQT=1/"> Link </a> |
-| Green Laser Pointer | Show where the planet is in a closed room | $25.99 | <a href="https://www.amazon.com/HITEKK-Pointer-Rechargeable-Tactical-Carrying/dp/B0DJS15VWP?gQT=1/"> Link </a> |
+| GT-U7 GPS Module GPS Receiver Navigation Satellite Positioning |This item is used to detect where each planet is| $14.99 | <a href=" https://www.amazon.com/Navigation-Satellite-Compatible-Microcontroller-Geekstory/dp/B07PRGBLX7?th=1/"> Link </a> |
+| Servos  | To control where the laser will point to on | $44.99 | <a href="https://www.servocity.com/hs-785hb-servo/"> Link </a> |
+| Arduino Laser pointer  | Show where the planet is in a closed room | $25.99 | <a href = "variant=1612627804169&country=US&currency=USD&utm_medium=product_sync&utm_source=google&utm_content=sag_organic&utm_campaign=sag_organic&srsltid=AfmBOorN_h0vAenLu7Gx8Prh9oPXD-hagsJSEsz1l3_zBcAnkcVSVaaB378&gQT=2"> Link </a> |
 | Power Distrubution Board | Used for Power  | $16.20 | <a href="https://www.keyestudio.com/products/keyestudio-4-channel-l298p-motor-drives-shield-v10-for-arduino-robot/"> Link </a> |
+| Servo Shield | Controls the servos using i2c | $16.20 | <a href="https://xpart.org/product/ks0258-16-channel-12-bit-servo-motor-driver-board-i2c-interface-for-arduino-r3-controller/"> Link </a> |
 
 
 
-<!--# Other Resources/Examples
-One of the best parts about Github is that you can view how other people set up their own work. Here are some past BSE portfolios that are awesome examples. You can view how they set up their portfolio, and you can view their index.md files to understand how they implemented different portfolio components.
-- [Example 1](https://trashytuber.github.io/YimingJiaBlueStamp/)
-- [Example 2](https://sviatil0.github.io/Sviatoslav_BSE/)
-- [Example 3](https://arneshkumar.github.io/arneshbluestamp/) **
--->
+
+# Outside Sources
+- (https://projecthub.arduino.cc/paulplusx/realtime-planet-tracking-system-and-trajectory-prediction-b6ec03/)
+
+  
 # RGB Sliders 
 
 
