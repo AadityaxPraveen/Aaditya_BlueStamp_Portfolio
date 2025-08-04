@@ -8,6 +8,7 @@ My project is a real time planet tracker. What this project does is it tracks th
 <img src = "AadityaP.heic.jpg" width = "450" height = "600">
   
 # Final Milestone
+<iframe width="560" height="315" src="https://www.youtube.com/embed/pzocsjSt3Kc?si=9HWhDIjUFc1O10Cj" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 # Summary
 
@@ -50,7 +51,6 @@ Some challenges I faced with this first milestone include making sure all of the
 
 <a href="https://paulplusx.wordpress.com/2016/03/03/rtpts_hw/">shubhampaul tinkercad</a>
 
-<img src = "IMG_7745.jpg" width = "900" height = "600">
 
 # Code
 
